@@ -137,7 +137,7 @@ public class MainActivity2 extends AppCompatActivity {
         Random rand = new Random();
         double[] arr = new double[size];
         for (int i = 0; i < size; i++) {
-            arr[i] = -10000 + rand.nextGaussian() * (20000);
+            arr[i] = rand.nextGaussian();
         }
 
         // Create the tensor and return it
