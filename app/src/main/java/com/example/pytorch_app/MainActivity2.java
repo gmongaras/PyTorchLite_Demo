@@ -66,6 +66,7 @@ public class MainActivity2 extends AppCompatActivity {
             public void onClick(View view) {
                 // Error handing
                 btnGenerate.setClickable(false);
+                ivImage.setVisibility(View.INVISIBLE);
                 tvWaiting.setVisibility(View.VISIBLE);
 
                 // Prepare the input tensor. This time, its a
@@ -78,14 +79,17 @@ public class MainActivity2 extends AppCompatActivity {
                     public void run() {
                         // Get the output from the model. The
                         // length should be 256*256*3 or 196608
+                        // Note that the output is in the layout
+                        // [R, G, B, R, G, B, ..., B] and we
+                        // have to deal with that.
                         float[] outputArr = module.forward(IValue.from(inputTensor)).toTensor().getDataAsFloatArray();
 
-                        // Ensure the output array has values between 0 and 256
+                        // Ensure the output array has values between 0 and 255
                         for (int i = 0; i < outputArr.length; i++) {
                             outputArr[i] = Math.min(Math.max(outputArr[i], 0), 255);
                         }
 
-                        // Create a bitmap of the correct shape
+                        // Create a RGB bitmap of the correct shape
                         Bitmap bmp = Bitmap.createBitmap(width, height, Bitmap.Config.RGB_565);
 
                         // Iterate over all values in the output tensor
@@ -115,6 +119,7 @@ public class MainActivity2 extends AppCompatActivity {
                                 // Error handing
                                 btnGenerate.setClickable(true);
                                 tvWaiting.setVisibility(View.INVISIBLE);
+                                ivImage.setVisibility(View.VISIBLE);
                             }
                         });
 
@@ -132,7 +137,7 @@ public class MainActivity2 extends AppCompatActivity {
         Random rand = new Random();
         double[] arr = new double[size];
         for (int i = 0; i < size; i++) {
-            arr[i] = -10000 + (double)rand.nextGaussian() * (20000);
+            arr[i] = -10000 + rand.nextGaussian() * (20000);
         }
 
         // Create the tensor and return it
